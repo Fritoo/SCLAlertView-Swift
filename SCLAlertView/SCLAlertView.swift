@@ -355,7 +355,7 @@ open class SCLAlertView: UIViewController {
     var baseView = UIView()
     var labelTitle = UILabel()
     var viewText = UITextView()
-    var contentView = UIView()
+    var contentView = UIScrollView()
     var circleBG = UIView(frame:CGRect(x:0, y:0, width:kCircleHeightBackground, height:kCircleHeightBackground))
     var circleView = UIView()
     var circleIconView : UIView?
@@ -456,7 +456,7 @@ open class SCLAlertView: UIViewController {
         
         // Set background frame
         view.frame.size = sz
-
+        
         let defaultTopOffset: CGFloat = 32
 
         // get actual height of title text
@@ -518,7 +518,8 @@ open class SCLAlertView: UIViewController {
         // Set frames
         var x = (sz.width - appearance.kWindowWidth) / 2
         var y = (sz.height - windowHeight - (appearance.kCircleHeight / 8)) / 2
-        contentView.frame = CGRect(x:x, y:y, width:appearance.kWindowWidth, height:windowHeight)
+        contentView.frame = CGRect(x:x, y:y, width:appearance.kWindowWidth, height: windowHeight)
+        contentView.contentSize = CGSize( width : appearance.kWindowWidth, height: consumedHeight)
         contentView.layer.cornerRadius = appearance.contentViewCornerRadius
         y -= kCircleHeightBackground * 0.6
         x = (sz.width - kCircleHeightBackground) / 2
@@ -535,7 +536,11 @@ open class SCLAlertView: UIViewController {
         // Text fields
         y += viewTextHeight
         y += viewText.text.isEmpty ? 0 : appearance.margin.textViewBottom // only viewText.text is not empty should have margin.
-      
+
+        // Adjust y to start at zero for cases where the content is larger than the frame
+        // For use when contentView is a scroll view
+        y = y < 0 ? 0 : y
+        
         for txt in inputs {
             
             // Label
